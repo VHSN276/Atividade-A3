@@ -25,11 +25,10 @@ public class Main {
             System.out.println("MENU\n[1]Usuarios\n[2]Projetos\n[3]Equipes\n[4]Sair\nSelecione uma opção: ");
             opcaoMenu = scanner.nextLine();
             switch (opcaoMenu){
-                case "1":
+                case "1": //Usuarios Menu
                     while(!opcao.equals("4")){
                         usuarioView.exibirMenu();
                         opcao = scanner.nextLine();
-
                         switch (opcao){
                             case "1": //Exibir usuarios cadastrados
                                 usuarioController.listarUsuarios();
@@ -46,13 +45,22 @@ public class Main {
                                 System.out.println("Senha: ");
                                 String senha = scanner.nextLine();
                                 usuarioController.cadastrarUsuario(nome, cpf, cargo, login, senha);
+                                break;
+                            case "3": //Exclusão de Usuario
+                                System.out.println("Digite o CPF do usuario que deseja excluir: ");
+                                String deleteCpf = scanner.nextLine();
+                                usuarioController.excluirUsuario(deleteCpf);
+                                break;
+                            default:
+                                System.out.println("Opção inválida. Tente novamente!");
+                                break;
                         }
                     }
                     break;
-                case "2":
+                case "2": //Projetos Menu
 
                     break;
-                case "3":
+                case "3"://Equipe Menu
 
                     break;
                 case "4":

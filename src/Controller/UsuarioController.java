@@ -20,6 +20,20 @@ public class UsuarioController {
         usuarioView.exibirMensagem("Usuario "+usuario.getNome()+" cadastrado com sucesso!");
     }
 
+    public void  excluirUsuario(String cpf){
+        int flag_founded_user = 0;
+        for(Usuario usuario : listaDeUsuarios){
+            if (usuario.getCpf().equals(cpf)){
+                usuarioView.exibirMensagem("Usuario "+usuario.getNome()+" excluido com sucesso!");
+                listaDeUsuarios.remove(usuario);
+                flag_founded_user = 1;
+            }
+        }
+        if(flag_founded_user == 0){
+            System.out.println("Usuário não encontrado!");
+        }
+    }
+
     public void listarUsuarios(){
         usuarioView.exibirUsuarios(listaDeUsuarios);
     }
