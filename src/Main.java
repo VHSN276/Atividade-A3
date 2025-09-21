@@ -51,6 +51,8 @@ public class Main {
                                 String deleteCpf = scanner.nextLine();
                                 usuarioController.excluirUsuario(deleteCpf);
                                 break;
+                            case "4":
+                                break;
                             default:
                                 System.out.println("Opção inválida. Tente novamente!");
                                 break;
@@ -76,7 +78,5 @@ public class Main {
         }
         scanner.close();
         System.out.println("Programa Finalizado");
-
-
     }
 }

@@ -15,9 +15,18 @@ public class UsuarioController {
     }
 
     public void  cadastrarUsuario(String nome, String cpf, String cargo, String login, String senha){
-        Usuario usuario = new Usuario(nome, cpf, cargo, login, senha);
-        listaDeUsuarios.add(usuario);
-        usuarioView.exibirMensagem("Usuario "+usuario.getNome()+" cadastrado com sucesso!");
+        boolean flag_cpf_cadastrado = false;
+        for (Usuario u : listaDeUsuarios){
+            if (cpf.equals(u.getCpf())){
+                System.out.println("Usuário com esse CPF já cadastrado");
+                flag_cpf_cadastrado = true;
+            }
+        }
+        if(flag_cpf_cadastrado == false){
+            Usuario usuario = new Usuario(nome, cpf, cargo, login, senha);
+            listaDeUsuarios.add(usuario);
+            usuarioView.exibirMensagem("Usuario "+usuario.getNome()+" cadastrado com sucesso!");
+        }
     }
 
     public void  excluirUsuario(String cpf){
