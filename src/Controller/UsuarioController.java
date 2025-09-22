@@ -14,6 +14,7 @@ public class UsuarioController {
         this.usuarioView = usuarioView;
     }
 
+    
     public void  cadastrarUsuario(String nome, String cpf, String cargo, String login, String senha){
         boolean flag_cpf_cadastrado = false;
         for (Usuario u : listaDeUsuarios){
