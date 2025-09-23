@@ -8,51 +8,106 @@ public class EquipeView {
 
     // Menu principal da área de equipes
     public void exibirMenu() {
-        System.out.println("\n--- Menu de Equipes ---");
-        System.out.println("[1] Listar Equipes");
-        System.out.println("[2] Cadastrar Equipe");
-        System.out.println("[3] Adicionar Usuário a uma Equipe");
-        System.out.println("[4] Remover Usuário de uma Equipe");
-        System.out.println("[0] Voltar");
-        System.out.print("Escolha uma opção: ");
+        try {
+            System.out.println("\n--- Menu de Equipes ---");
+            System.out.println("[1] Listar Equipes");
+            System.out.println("[2] Cadastrar Equipe");
+            System.out.println("[3] Adicionar Usuário a uma Equipe");
+            System.out.println("[4] Remover Usuário de uma Equipe");
+            System.out.println("[0] Voltar");
+            System.out.print("Escolha uma opção: ");
+        } catch (Exception e) {
+            System.err.println("Erro ao exibir menu de equipes: " + e.getMessage());
+        }
     }
 
     // Lista simples de equipes
     public void exibirEquipes(List<Equipe> equipes) {
-        System.out.println("\n--- Lista de Equipes ---");
-        if (equipes == null || equipes.isEmpty()) {
-            System.out.println("Nenhuma equipe cadastrada.");
-            return;
-        }
+        try {
+            System.out.println("\n--- Lista de Equipes ---");
 
-        int i = 1;
-        for (Equipe e : equipes) {
-            System.out.println("[" + (i++) + "] Equipe: " + e);
+            if (equipes == null) {
+                System.out.println("Lista de equipes não inicializada.");
+                return;
+            }
+
+            if (equipes.isEmpty()) {
+                System.out.println("Nenhuma equipe cadastrada.");
+                return;
+            }
+
+            int i = 1;
+            for (Equipe e : equipes) {
+                try {
+                    if (e == null) {
+                        System.out.println("[" + i + "] Equipe inválida (dados nulos)");
+                    } else {
+                        System.out.println("[" + i + "] Equipe: " + e.toString());
+                    }
+                    i++;
+                } catch (Exception ex) {
+                    System.err.println("Erro ao exibir equipe " + i + ": " + ex.getMessage());
+                    i++;
+                }
+            }
+        } catch (NullPointerException e) {
+            System.err.println("Erro: referência nula ao exibir equipes: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Erro inesperado ao exibir equipes: " + e.getMessage());
         }
     }
 
     // Mostra uma equipe com seus membros
     public void exibirEquipeComMembros(Equipe equipe, List<Usuario> membros) {
-        if (equipe == null) {
-            System.out.println("Equipe inválida.");
-            return;
-        }
+        try {
+            if (equipe == null) {
+                System.out.println("Equipe inválida.");
+                return;
+            }
 
-        System.out.println("\nEquipe: " + equipe);
+            System.out.println("\nEquipe: " + equipe.toString());
 
-        if (membros == null || membros.isEmpty()) {
-            System.out.println("(sem membros)");
-            return;
-        }
+            if (membros == null) {
+                System.out.println("Lista de membros não inicializada");
+                return;
+            }
 
-        System.out.println("Membros:");
-        for (Usuario u : membros) {
-            // imprime o objeto direto
-            System.out.println(" - " + u);
+            if (membros.isEmpty()) {
+                System.out.println("(sem membros)");
+                return;
+            }
+
+            System.out.println("Membros:");
+            int index = 1;
+            for (Usuario u : membros) {
+                try {
+                    if (u == null) {
+                        System.out.println(" - [" + index + "] Membro inválido (dados nulos)");
+                    } else {
+                        System.out.println(" - [" + index + "] " + u.toString());
+                    }
+                    index++;
+                } catch (Exception e) {
+                    System.err.println("Erro ao exibir membro " + index + ": " + e.getMessage());
+                    index++;
+                }
+            }
+        } catch (NullPointerException e) {
+            System.err.println("Erro: referência nula ao exibir equipe com membros: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Erro inesperado ao exibir equipe com membros: " + e.getMessage());
         }
     }
 
     public void exibirMensagem(String msg) {
-        System.out.println(msg);
+        try {
+            if (msg == null) {
+                System.out.println("Mensagem não informada");
+            } else {
+                System.out.println(msg);
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao exibir mensagem: " + e.getMessage());
+        }
     }
 }
