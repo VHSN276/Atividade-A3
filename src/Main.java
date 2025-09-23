@@ -1,11 +1,15 @@
 import Controller.EquipeController;
+import Controller.ProjetoController;
 import Controller.UsuarioController;
 import Model.Equipe;
+import Model.StatusProjeto;
 import Model.Usuario;
 import View.EquipeView;
+import View.ProjetoView;
 import View.UsuarioView;
 
 import java.sql.SQLOutput;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -65,8 +69,85 @@ public class Main {
                     }
                     break;
                 case "2": //Projetos Menu
+                    while(!opcao.equals("0")){
+                        usuarioView.exibirMenu();
+                        opcao = scanner.nextLine();
+                    }
+                    switch (opcao){
+                        case "1":
+                            ProjetoController.exibirProjetos();
+                            break;
+                        case "2":
+                            System.out.print("Nome do projeto: ");
+                            String nomeP = scanner.nextLine();
+                            System.out.print("Data início (YYYY-MM-DD): ");
+                            LocalDate inicio = LocalDate.parse(scanner.nextLine());
+                            System.out.print("Data fim (YYYY-MM-DD): ");
+                            LocalDate fim = LocalDate.parse(scanner.nextLine());
+                            System.out.print("CPF do Responsável: ");
+                            String cpfResp = scanner.nextLine();
 
+                            Usuario resp = usuarioController.getUsuarios().stream()
+                                    .filter(u -> u.getCpf().equals(cpfResp))
+                                    .findFirst()
+                                    .orElse(null);
 
+                            if (resp != null) {
+                                ProjetoController.cadastrarProjeto(nomeP, inicio, fim, resp);
+                            } else {
+                                ProjetoView.exibirMensagem("  Responsável não encontrado.");
+                            }
+                            break;
+                        case "3":
+
+                            System.out.print("Nome do projeto: ");
+                            String nomeProjetoStatus = scanner.nextLine();
+
+                            System.out.print("Escolha o novo status: ");
+                            System.out.print("1 - PLANEJADO");
+                            System.out.print("2 - EM_ANDAMENTO");
+                            System.out.print("3 - CONCLUIDO");
+                            String statusOpcao = scanner.nextLine();
+
+                            StatusProjeto novoStatus = null;
+                            switch (statusOpcao){
+                                case "1":
+                                    novoStatus = StatusProjeto.PLANEJADO;
+                                    break;
+                                case "2":
+                                    novoStatus = StatusProjeto.EM_ANDAMENTO;
+                                    break;
+                                case "3":
+                                    novoStatus = StatusProjeto.CONCLUIDO;
+                                    break;
+                                default:
+                                    ProjetoView.exibirMensagem("Opção de status inválida. ");
+                                    break;
+                            }
+                            if (novoStatus != null) {
+                                ProjetoController.alterarStatusProjeto(nomeProjetoStatus,novoStatus);
+                            }
+                        break;
+
+                        case "4":
+                            System.out.print("Nome do projeto: ");
+                            String nomeProjeto = scanner.nextLine();
+                            System.out.print("Nome da equipe: ");
+                            String equipeNome = scanner.nextLine();
+
+                            Equipe equipe = equipeController.getEquipes().stream()
+                                    .filter(e -> e.getNome().equalsIgnoreCase(equipeNome))
+                                    .findFirst()
+                                    .orElse(null);
+
+                            if (equipe != null) {
+                                ProjetoController.adicionarEquipe(nomeProjeto, equipe);
+                            } else {
+                                ProjetoView.exibirMensagem("  Equipe '" + equipeNome + "' não encontrada.");
+                            }
+                            break;
+
+                    }
                     break;
                 case "3"://Equipe Menu
                     while(!opcao.equals("0")){

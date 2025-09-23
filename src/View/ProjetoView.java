@@ -1,7 +1,9 @@
 package View;
 
 import java.util.List;
+
 import Model.Projeto;
+
 
 public class ProjetoView {
 
@@ -14,17 +16,16 @@ public class ProjetoView {
         System.out.println("[0] Voltar");
     }
 
-    public void exibirProjetos(List<Projeto> projetos) {
-        if (projetos == null || projetos.isEmpty()) {
-            System.out.println("Nenhum projeto cadastrado.");
-        } else {
-            for (Projeto projeto : projetos) {
-                System.out.println(" - " + projeto);
-            }
-        }
+    public void exibirProjetos(List<Projeto> projeto) {
+
     }
 
-    public void exibirMensagem(String msg) {
+    public static void exibirMensagem(String msg) {
         System.out.println(msg);
     }
+
+    public void ProjetoView(String s) {
+    }
+
+
 }

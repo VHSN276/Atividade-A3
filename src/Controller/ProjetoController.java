@@ -1,50 +1,67 @@
 package Controller;
 
-import Model.Projeto;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
-import java.util.Optional;
+import Model.Equipe;
+import Model.Projeto;
+import Model.StatusProjeto;
+import Model.Usuario;
+import View.ProjetoView;
 
 public class ProjetoController {
-    private final List<Projeto> projetos = new ArrayList<>();
-    private Long contador = 1L;
+    private static Deque<Projeto> Projetos;
+    private static List<Projeto> projetos;
+    private ProjetoView view;
 
-    // Método para listar todos os projetos
-    public List<Projeto> listar() {
-        return projetos;
+    public ProjetoController(ProjetoView view) {
+        this.view = view;
+        this.projetos = new ArrayList<>();
     }
 
-    // Método para criar um novo projeto
-    public Projeto criar(Projeto projeto) {
-        projeto.setId(contador++);
-        projetos.add(projeto);
-        return projeto;
+    public static void exibirProjetos() {
     }
 
-    // Método para buscar um projeto pelo ID
-    public Optional<Projeto> buscarPorId(Long id) {
-        return projetos.stream()
-                .filter(p -> p.getId().equals(id))
-                .findFirst();
-    }
-
-    // Método para atualizar um projeto existente
-    public Optional<Projeto> atualizar(Long id, Projeto atualizado) {
-        Optional<Projeto> projetoExistente = buscarPorId(id);
-        if (projetoExistente.isPresent()) {
-            Projeto projeto = projetoExistente.get();
-            projeto.setNome(atualizado.getNome());
-            projeto.setCargo(atualizado.getCargo());
-            projeto.setCpf(atualizado.getCpf());
-            projeto.setLogin(atualizado.getLogin());
-            projeto.setSenha(atualizado.getSenha());
-            return Optional.of(projeto);
+    public static void cadastrarProjeto(String nome, LocalDate inicio, LocalDate fim, Usuario responsavel) {
+        if (!responsavel.getCargo().equalsIgnoreCase("Admin") &&
+                !responsavel.getCargo().equalsIgnoreCase("Gerente")) {
+            ProjetoView.exibirMensagem(" Apenas Admin ou Gerente podem ser responsáveis por projetos.");
+            return;
         }
-        return Optional.empty();
+        if (fim.isBefore(inicio)) {
+            ProjetoView.exibirMensagem(" Data final deve ser depois da data inicial.");
+            return;
+        }
+        Projetos.add(new Projeto(nome, inicio, fim, responsavel));
+        ProjetoView.exibirMensagem(" Projeto '" + nome + "' cadastrado com sucesso!");
+    }
+    public static void adicionarEquipe(String nomeProjeto, Equipe equipe) {
+        for (Projeto p : projetos) {
+            if (p.getNome().equalsIgnoreCase(nomeProjeto)) {
+                boolean adicionada = p.adicionarEquipe(equipe);
+                if (adicionada) {
+                    ProjetoView.exibirMensagem(" Equipe adicionada ao projeto!");
+                } else {
+                    ProjetoView.exibirMensagem(" Equipe já está neste projeto.");
+                }
+                return;
+            }
+        }
+        ProjetoView.exibirMensagem(" Projeto não encontrado.");
+    }
+    public void listarProjetos() {
+        view.exibirProjetos(projetos);
     }
 
-    // Método para remover um projeto pelo ID
-    public boolean remover(Long id) {
-        return projetos.removeIf(p -> p.getId().equals(id));
+    public static void alterarStatusProjeto(String nomeProjeto, StatusProjeto novoStatus) {
+        for (Projeto p : projetos) {
+            if (p.getNome().equalsIgnoreCase(nomeProjeto)) {
+                p.alterarStatus(novoStatus);
+                ProjetoView.exibirMensagem("Status do projeto" + nomeProjeto + " alterado para " + novoStatus.toString());
+                return;
+            }
+        }
     }
+
 }

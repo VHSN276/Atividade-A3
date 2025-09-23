@@ -1,39 +1,53 @@
 package Model;
 
+
+import Model.Equipe;
+import Model.Usuario;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Projeto {
-    private Long id;
     private String nome;
-    private String cargo;
-    private String cpf;
-    private String login;
-    private String senha;
+    private LocalDate dataInicio;
+    private LocalDate dataFim;
+    private Usuario responsavel;
+    private List<Equipe> equipes;
+    private StatusProjeto status;
 
-    public Projeto() {}
-
-    public Projeto(String nome, String cargo, String cpf, String login, String senha) {
+    public Projeto(String nome, LocalDate dataInicio, LocalDate dataFim, Usuario responsavel){
         this.nome = nome;
-        this.cargo = cargo;
-        this.cpf = cpf;
-        this.login = login;
-        this.senha = senha;
+        this.dataInicio = dataInicio;
+        this.dataFim = dataFim;
+        this.responsavel = responsavel;
+        this.equipes = new ArrayList<>();
+
+    }
+    public String getNome() {
+        return nome;
+    }
+    public LocalDate getDataInicio() {
+        return dataInicio;
+    }
+    public LocalDate getDataFim() {
+        return dataFim;
+    }
+    public Usuario getResponsavel() {
+        return responsavel;
+    }
+    public List<Equipe>  getEquipes() {
+        return equipes;
+    }
+    public void alterarStatus(StatusProjeto novoStatus){
+        if (novoStatus != null) {
+            this.status = novoStatus;
+        }
     }
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
+    public boolean adicionarEquipe(Equipe equipe) {
+        return equipes.add(equipe);
+    }
 
-    public String getCargo() { return cargo; }
-    public void setCargo(String cargo) { this.cargo = cargo; }
-
-    public String getCpf() { return cpf; }
-    public void setCpf(String cpf) { this.cpf = cpf; }
-
-    public String getLogin() { return login; }
-    public void setLogin(String login) { this.login = login; }
-
-    public String getSenha() { return senha; }
-    public void setSenha(String senha) { this.senha = senha; }
 }
