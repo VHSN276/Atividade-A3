@@ -47,4 +47,8 @@ public class UsuarioController {
     public void listarUsuarios(){
         usuarioView.exibirUsuarios(listaDeUsuarios);
     }
+    public List<Usuario> getUsuarios() {
+        return listaDeUsuarios;
+    }
 }
+

@@ -1,7 +1,11 @@
+import Controller.EquipeController;
 import Controller.UsuarioController;
+import Model.Equipe;
 import Model.Usuario;
+import View.EquipeView;
 import View.UsuarioView;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,7 +18,8 @@ public class Main {
 
         UsuarioView usuarioView = new UsuarioView();
         UsuarioController usuarioController = new UsuarioController(bancoDadosLocal, usuarioView);
-
+        EquipeView equipeView = new EquipeView();
+        EquipeController   equipeController = new EquipeController(equipeView);
         Scanner scanner = new Scanner(System.in);
         String opcao = "";
         String opcaoMenu = "";
@@ -61,8 +66,46 @@ public class Main {
                     break;
                 case "2": //Projetos Menu
 
+
                     break;
                 case "3"://Equipe Menu
+                    while(!opcao.equals("0")){
+                        usuarioView.exibirMenu();
+                        opcao = scanner.nextLine();
+                    }
+                    switch (opcao) {
+                        case "1":
+                            equipeController.listarEquipes();
+                            break;
+                        case "2":
+                            System.out.print("Nome da equipe: ");
+                            String nomeE = scanner.nextLine();
+                            equipeController.cadastrarEquipe(nomeE);
+                            break;
+                        case "3":
+                            System.out.print("Nome da equipe: ");
+                            String nomeEquipe = scanner.nextLine();
+                            System.out.print("CPF do usuário: ");
+                            String cpfUsuario = scanner.nextLine();
+
+                            Usuario usuarioEncontrado = usuarioController.getUsuarios().stream()
+                                    .filter(u -> u.getCpf().equals(cpfUsuario))
+                                    .findFirst()
+                                    .orElse(null);
+
+                            if (usuarioEncontrado != null) {
+                                equipeController.adicionarUsuario(nomeEquipe, usuarioEncontrado);
+                            } else {
+                                equipeView.exibirMensagem(" Usuário não encontrado.");
+                            }
+                            break;
+                        case "4":
+                            System.out.print("Nome da equipe: ");
+                            String nomeEquipeRemover = scanner.nextLine();
+                            String cpfRemover = scanner.nextLine();
+                            equipeController.removerUsuarioDaequipe(nomeEquipeRemover, cpfRemover);
+                            break;
+                    }
 
                     break;
                 case "4":
