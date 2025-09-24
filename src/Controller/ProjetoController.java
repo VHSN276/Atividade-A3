@@ -2,8 +2,7 @@ package Controller;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.ConcurrentModificationException;
+import java.util.List; // Importe apenas a List
 import Model.Equipe;
 import Model.Projeto;
 import Model.StatusProjeto;
@@ -15,172 +14,135 @@ public class ProjetoController {
     private ProjetoView view;
 
     public ProjetoController(ProjetoView view, List<Projeto> listaProjetos) {
-        try {
-            if (view == null) {
-                throw new IllegalArgumentException("ProjetoView não pode ser nula");
-            }
-            if (listaProjetos == null) {
-                throw new IllegalArgumentException("Lista de projetos não pode ser nula");
-            }
-            this.view = view;
-            this.projetos = listaProjetos;
-        } catch (Exception e) {
-            System.err.println("Erro ao inicializar ProjetoController: " + e.getMessage());
-            throw e;
-        }
+        this.view = view;
+        this.projetos = listaProjetos;
     }
 
     public void cadastrarProjeto(String nome, LocalDate inicio, LocalDate fim, Usuario responsavel) {
         try {
-            // Validações de entrada
+            // Validações básicas
             if (nome == null || nome.trim().isEmpty()) {
-                throw new IllegalArgumentException("Nome do projeto não pode ser vazio");
+                ProjetoView.exibirMensagem("Erro: Nome do projeto não pode estar vazio.");
+                return;
             }
             if (inicio == null) {
-                throw new IllegalArgumentException("Data de início não pode ser nula");
+                ProjetoView.exibirMensagem("Erro: Data de início não pode ser nula.");
+                return;
             }
             if (fim == null) {
-                throw new IllegalArgumentException("Data de fim não pode ser nula");
+                ProjetoView.exibirMensagem("Erro: Data de fim não pode ser nula.");
+                return;
             }
             if (responsavel == null) {
-                throw new IllegalArgumentException("Responsável não pode ser nulo");
-            }
-
-            try {
-                if (responsavel.getCargo() == null) {
-                    throw new IllegalArgumentException("Cargo do responsável não pode ser nulo");
-                }
-
-                if (!responsavel.getCargo().equalsIgnoreCase("Admin") &&
-                        !responsavel.getCargo().equalsIgnoreCase("Gerente")) {
-                    ProjetoView.exibirMensagem("Apenas Admin ou Gerente podem ser responsáveis por projetos.");
-                    return;
-                }
-            } catch (NullPointerException e) {
-                System.err.println("Erro: dados do responsável são nulos: " + e.getMessage());
+                ProjetoView.exibirMensagem("Erro: Responsável não pode ser nulo.");
                 return;
             }
 
-            try {
-                if (fim.isBefore(inicio)) {
-                    ProjetoView.exibirMensagem("Data final deve ser depois da data inicial.");
-                    return;
-                }
-            } catch (Exception e) {
-                System.err.println("Erro ao comparar datas: " + e.getMessage());
+            if (!responsavel.getCargo().equalsIgnoreCase("Admin") &&
+                    !responsavel.getCargo().equalsIgnoreCase("Gerente")) {
+                ProjetoView.exibirMensagem(" Apenas Admin ou Gerente podem ser responsáveis por projetos.");
+                return;
+            }
+            if (fim.isBefore(inicio)) {
+                ProjetoView.exibirMensagem(" Data final deve ser depois da data inicial.");
                 return;
             }
 
-            try {
-                projetos.add(new Projeto(nome.trim(), inicio, fim, responsavel));
-                ProjetoView.exibirMensagem("Projeto '" + nome + "' cadastrado com sucesso!");
-            } catch (Exception e) {
-                System.err.println("Erro ao adicionar projeto à lista: " + e.getMessage());
+            // Verificar se já existe projeto com o mesmo nome
+            for (Projeto p : projetos) {
+                if (p != null && p.getNome() != null && p.getNome().equalsIgnoreCase(nome)) {
+                    ProjetoView.exibirMensagem("Erro: Já existe um projeto com esse nome.");
+                    return;
+                }
             }
 
-        } catch (IllegalArgumentException e) {
-            System.err.println("Erro de validação: " + e.getMessage());
+            projetos.add(new Projeto(nome, inicio, fim, responsavel));
+            ProjetoView.exibirMensagem(" Projeto '" + nome + "' cadastrado com sucesso!");
+        } catch (NullPointerException e) {
+            ProjetoView.exibirMensagem("Erro: Referência nula encontrada - " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("Erro inesperado ao cadastrar projeto: " + e.getMessage());
+            ProjetoView.exibirMensagem("Erro ao cadastrar projeto: " + e.getMessage());
         }
     }
 
     public void adicionarEquipe(String nomeProjeto, Equipe equipe) {
         try {
             if (nomeProjeto == null || nomeProjeto.trim().isEmpty()) {
-                throw new IllegalArgumentException("Nome do projeto não pode ser vazio");
+                ProjetoView.exibirMensagem("Erro: Nome do projeto não pode estar vazio.");
+                return;
             }
             if (equipe == null) {
-                throw new IllegalArgumentException("Equipe não pode ser nula");
+                ProjetoView.exibirMensagem("Erro: Equipe não pode ser nula.");
+                return;
+            }
+            if (projetos == null || projetos.isEmpty()) {
+                ProjetoView.exibirMensagem("Erro: Nenhum projeto cadastrado.");
+                return;
             }
 
-            try {
-                for (Projeto p : projetos) {
-                    if (p != null && p.getNome() != null && p.getNome().equalsIgnoreCase(nomeProjeto.trim())) {
-                        try {
-                            boolean adicionada = p.adicionarEquipe(equipe);
-                            if (adicionada) {
-                                ProjetoView.exibirMensagem("Projeto adicionado à Equipe!");
-                            } else {
-                                ProjetoView.exibirMensagem("Projeto já está nesta Equipe.");
-                            }
-                        } catch (Exception e) {
-                            System.err.println("Erro ao adicionar equipe ao projeto: " + e.getMessage());
-                        }
-                        return;
+            for (Projeto p : projetos) {
+                if (p != null && p.getNome() != null && p.getNome().equalsIgnoreCase(nomeProjeto)) {
+                    boolean adicionada = p.adicionarEquipe(equipe);
+                    if (adicionada) {
+                        ProjetoView.exibirMensagem(" Equipe adicionada ao Projeto!");
+                    } else {
+                        ProjetoView.exibirMensagem(" Equipe já está neste Projeto.");
                     }
+                    return;
                 }
-            } catch (ConcurrentModificationException e) {
-                System.err.println("Erro de concorrência ao buscar projeto: " + e.getMessage());
-                return;
-            } catch (NullPointerException e) {
-                System.err.println("Erro: projeto nulo encontrado na lista: " + e.getMessage());
-                return;
             }
-
-            ProjetoView.exibirMensagem("Projeto não encontrado.");
-        } catch (IllegalArgumentException e) {
-            System.err.println("Erro de validação: " + e.getMessage());
+            ProjetoView.exibirMensagem(" Projeto não encontrado.");
+        } catch (NullPointerException e) {
+            ProjetoView.exibirMensagem("Erro: Referência nula encontrada - " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("Erro inesperado ao adicionar equipe: " + e.getMessage());
+            ProjetoView.exibirMensagem("Erro ao adicionar equipe ao projeto: " + e.getMessage());
         }
     }
 
     public void alterarStatusProjeto(String nomeProjeto, StatusProjeto novoStatus) {
         try {
             if (nomeProjeto == null || nomeProjeto.trim().isEmpty()) {
-                throw new IllegalArgumentException("Nome do projeto não pode ser vazio");
+                ProjetoView.exibirMensagem("Erro: Nome do projeto não pode estar vazio.");
+                return;
             }
             if (novoStatus == null) {
-                throw new IllegalArgumentException("Novo status não pode ser nulo");
+                ProjetoView.exibirMensagem("Erro: Status não pode ser nulo.");
+                return;
+            }
+            if (projetos == null || projetos.isEmpty()) {
+                ProjetoView.exibirMensagem("Erro: Nenhum projeto cadastrado.");
+                return;
             }
 
-            try {
-                for (Projeto p : projetos) {
-                    if (p != null && p.getNome() != null && p.getNome().equalsIgnoreCase(nomeProjeto.trim())) {
-                        try {
-                            p.alterarStatus(novoStatus);
-                            ProjetoView.exibirMensagem("Status do projeto " + nomeProjeto + " alterado para " + novoStatus.toString());
-                        } catch (Exception e) {
-                            System.err.println("Erro ao alterar status do projeto: " + e.getMessage());
-                        }
-                        return;
-                    }
+            for (Projeto p : projetos) {
+                if (p != null && p.getNome() != null && p.getNome().equalsIgnoreCase(nomeProjeto)) {
+                    p.alterarStatus(novoStatus);
+                    ProjetoView.exibirMensagem("Status do projeto " + nomeProjeto + " alterado para " + novoStatus.toString());
+                    return;
                 }
-            } catch (ConcurrentModificationException e) {
-                System.err.println("Erro de concorrência ao buscar projeto: " + e.getMessage());
-                return;
-            } catch (NullPointerException e) {
-                System.err.println("Erro: projeto nulo encontrado na lista: " + e.getMessage());
-                return;
             }
-
-            ProjetoView.exibirMensagem("Projeto não encontrado.");
-        } catch (IllegalArgumentException e) {
-            System.err.println("Erro de validação: " + e.getMessage());
+            ProjetoView.exibirMensagem(" Projeto não encontrado.");
+        } catch (NullPointerException e) {
+            ProjetoView.exibirMensagem("Erro: Referência nula encontrada - " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("Erro inesperado ao alterar status: " + e.getMessage());
+            ProjetoView.exibirMensagem("Erro ao alterar status do projeto: " + e.getMessage());
         }
     }
+
 
     public void exibirProjetos() {
         try {
             if (projetos == null) {
-                ProjetoView.exibirMensagem("Lista de projetos não inicializada.");
+                ProjetoView.exibirMensagem("Erro: Lista de projetos não foi inicializada.");
                 return;
             }
-
             if (projetos.isEmpty()) {
                 ProjetoView.exibirMensagem("Nenhum projeto cadastrado.");
             } else {
-                try {
-                    view.exibirProjetos(projetos);
-                } catch (Exception e) {
-                    System.err.println("Erro ao exibir projetos na view: " + e.getMessage());
-                }
+                view.exibirProjetos(projetos);
             }
         } catch (Exception e) {
-            System.err.println("Erro inesperado ao exibir projetos: " + e.getMessage());
+            ProjetoView.exibirMensagem("Erro ao exibir projetos: " + e.getMessage());
         }
     }
 }
