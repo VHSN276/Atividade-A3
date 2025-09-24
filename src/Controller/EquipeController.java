@@ -11,9 +11,9 @@ public class EquipeController {
     private List<Equipe> equipes;
     private EquipeView view;
 
-    public EquipeController(EquipeView view) {
+    public EquipeController(EquipeView view, List<Equipe> listaEquipes) {
         this.view = view;
-        this.equipes = new ArrayList<>();
+        this.equipes = listaEquipes;
     }
     public void cadastrarEquipe(String nome) {
         for (Equipe e : equipes) {
@@ -38,8 +38,19 @@ public class EquipeController {
         }
         view.exibirMensagem(" Equipe não encontrada.");
     }
+
     public void listarEquipes() {
         view.exibirEquipes(equipes);
+    }
+
+    public void listarEquipeComMembros() {
+        if (equipes.isEmpty()) {
+            view.exibirMensagem("Nenhuma equipe cadastrada.");
+            return;
+        }
+        // Supõe que a sua EquipeView tem um método para exibir os detalhes da equipe
+        // Se não tiver, você precisará criar um ou adaptar a lógica abaixo.
+        view.exibirDetalhesEquipes(equipes);
     }
 
     public List<Equipe> getEquipes(){

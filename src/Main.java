@@ -2,6 +2,7 @@ import Controller.EquipeController;
 import Controller.ProjetoController;
 import Controller.UsuarioController;
 import Model.Equipe;
+import Model.Projeto;
 import Model.StatusProjeto;
 import Model.Usuario;
 import View.EquipeView;
@@ -16,13 +17,15 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         List<Usuario> bancoDadosLocal = new ArrayList<>();
+        List<Equipe> bancoDadosLocalEquipe = new ArrayList<>();
+        List<Projeto> bancoDadosLocalProjeto = new ArrayList<>();
 
         UsuarioView usuarioView = new UsuarioView();
         UsuarioController usuarioController = new UsuarioController(bancoDadosLocal, usuarioView);
         EquipeView equipeView = new EquipeView();
-        EquipeController equipeController = new EquipeController(equipeView);
+        EquipeController equipeController = new EquipeController(equipeView, bancoDadosLocalEquipe);
         ProjetoView projetoView = new ProjetoView();
-        ProjetoController projetoController = new ProjetoController(projetoView);
+        ProjetoController projetoController = new ProjetoController(projetoView, bancoDadosLocalProjeto);
         Scanner scanner = new Scanner(System.in);
         String opcao = "";
         String opcaoMenu = "";
@@ -189,6 +192,9 @@ public class Main {
                                 System.out.print("CPF do usuário a ser removido: ");
                                 String cpfRemover = scanner.nextLine();
                                 equipeController.removerUsuarioDaequipe(nomeEquipeRemover, cpfRemover);
+                                break;
+                            case "5":
+                                equipeView.exibirDetalhesEquipes(bancoDadosLocalEquipe);
                                 break;
                             case "0":
                                 System.out.println("Retornando ao menu principal...");

@@ -13,9 +13,9 @@ public class ProjetoController {
     private List<Projeto> projetos;
     private ProjetoView view;
 
-    public ProjetoController(ProjetoView view) {
+    public ProjetoController(ProjetoView view, List<Projeto> listaProjetos) {
         this.view = view;
-        this.projetos = new ArrayList<>();
+        this.projetos = listaProjetos;
     }
 
     public void cadastrarProjeto(String nome, LocalDate inicio, LocalDate fim, Usuario responsavel) {
