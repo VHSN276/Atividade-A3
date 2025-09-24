@@ -48,7 +48,7 @@ public class Main {
                                 String nome = scanner.nextLine();
                                 System.out.println("CPF: ");
                                 String cpf = scanner.nextLine();
-                                System.out.println("Cargo: ");
+                                System.out.println("Cargo (Admin/Gerente/Comum): ");
                                 String cargo = scanner.nextLine();
                                 System.out.println("Login: ");
                                 String login = scanner.nextLine();
