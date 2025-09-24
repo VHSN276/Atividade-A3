@@ -27,7 +27,7 @@ public class EquipeView {
 
         int i = 1;
         for (Equipe e : equipes) {
-            System.out.println("[" + (i++) + "] Equipe: " + e);
+            System.out.println("[" + (i++) + "] Equipe: " + e.getNome());
         }
     }
 

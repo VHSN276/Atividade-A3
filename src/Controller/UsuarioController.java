@@ -1,5 +1,5 @@
 package Controller;
-
+import java.util.Iterator;
 import Model.Usuario;
 import View.UsuarioView;
 
@@ -30,16 +30,24 @@ public class UsuarioController {
         }
     }
 
-    public void  excluirUsuario(String cpf){
+    public void excluirUsuario(String cpf) {
         int flag_founded_user = 0;
-        for(Usuario usuario : listaDeUsuarios){
-            if (usuario.getCpf().equals(cpf)){
-                usuarioView.exibirMensagem("Usuario "+usuario.getNome()+" excluido com sucesso!");
-                listaDeUsuarios.remove(usuario);
+
+        // 1. Crie um Iterator para a sua lista
+        Iterator<Usuario> iterator = listaDeUsuarios.iterator();
+
+        // 2. Use um loop 'while' com o iterator
+        while (iterator.hasNext()) {
+            Usuario usuario = iterator.next();
+            if (usuario.getCpf().equals(cpf)) {
+                usuarioView.exibirMensagem("Usuario " + usuario.getNome() + " excluido com sucesso!");
+                iterator.remove();
                 flag_founded_user = 1;
+                break;
             }
         }
-        if(flag_founded_user == 0){
+
+        if (flag_founded_user == 0) {
             System.out.println("Usuário não encontrado!");
         }
     }

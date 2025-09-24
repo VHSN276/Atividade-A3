@@ -6,7 +6,7 @@ import java.util.List;
 
 public class UsuarioView {
     public void exibirMenu(){
-        System.out.println("\nMenu\n[1]Exibir Usuários\n[2]Cadastrar um novo Usuário\n[3]Excluir um Usuário\n[4]Voltar\nEscolha uma opção: ");
+        System.out.println("\nMenu\n[1]Exibir Usuários\n[2]Cadastrar um novo Usuário\n[3]Excluir um Usuário\n[0]Voltar\nEscolha uma opção: ");
     }
     public void exibirUsuarios(List<Usuario> usuarios){
         System.out.println("Lista de Usuários");

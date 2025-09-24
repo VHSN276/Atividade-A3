@@ -44,8 +44,6 @@ public class EquipeController {
 
     public List<Equipe> getEquipes(){
         return equipes;
-
-
     }
     public void removerUsuarioDaequipe(String nomeEquipe,String nomeUsuario) {
         for (Equipe e : equipes) {
