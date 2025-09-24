@@ -1,103 +1,244 @@
 package Model;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.*;
-import jakarta.persistence.*;
-import java.util.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-@SpringBootApplication
-public class ProjetoApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(ProjetoApplication.class, args);
-    }
-}
-
-// Classe de modelo
-@Entity
-public class Projeto {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class Projeto extends Default {
     private Long id;
+    private LocalDate dataInicio;
+    private LocalDate dataFim;
+    private Usuario responsavel;
+    private StatusProjeto status;
+    private List<Equipe> equipes;
 
-    private String nome;
-    private String cargo;
-    private String cpf;
-    private String login;
-    private String senha;
-
-    public Projeto() {}
-
-    public Projeto(String nome, String cargo, String cpf, String login, String senha) {
-        this.nome = nome;
-        this.cargo = cargo;
-        this.cpf = cpf;
-        this.login = login;
-        this.senha = senha;
+    public Projeto() {
+        try {
+            this.equipes = new ArrayList<>();
+            this.status = StatusProjeto.PLANEJADO;
+        } catch (Exception e) {
+            System.err.println("Erro ao inicializar projeto: " + e.getMessage());
+        }
     }
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Projeto(String nome, LocalDate dataInicio, LocalDate dataFim, Usuario responsavel) {
+        try {
+            if (nome == null || nome.trim().isEmpty()) {
+                throw new IllegalArgumentException("Nome do projeto não pode ser vazio");
+            }
+            if (dataInicio == null) {
+                throw new IllegalArgumentException("Data de início não pode ser nula");
+            }
+            if (dataFim == null) {
+                throw new IllegalArgumentException("Data de fim não pode ser nula");
+            }
+            if (responsavel == null) {
+                throw new IllegalArgumentException("Responsável não pode ser nulo");
+            }
+            if (dataFim.isBefore(dataInicio)) {
+                throw new IllegalArgumentException("Data de fim deve ser posterior à data de início");
+            }
 
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
-
-    public String getCargo() { return cargo; }
-    public void setCargo(String cargo) { this.cargo = cargo; }
-
-    public String getCpf() { return cpf; }
-    public void setCpf(String cpf) { this.cpf = cpf; }
-
-    public String getLogin() { return login; }
-    public void setLogin(String login) { this.login = login; }
-
-    public String getSenha() { return senha; }
-    public void setSenha(String senha) { this.senha = senha; }
-}
-
-// Classe de Controller (com simulação de banco de dados)
-@RestController
-@RequestMapping("/projetos")
-public class ProjetoController {
-
-    private final List<Projeto> projetos = new ArrayList<>();
-    private Long contador = 1L;
-
-    @GetMapping
-    public List<Projeto> listar() {
-        return projetos;
+            super.setNome(nome.trim());
+            this.dataInicio = dataInicio;
+            this.dataFim = dataFim;
+            this.responsavel = responsavel;
+            this.status = StatusProjeto.PLANEJADO;
+            this.equipes = new ArrayList<>();
+        } catch (IllegalArgumentException e) {
+            System.err.println("Erro de validação ao criar projeto: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            System.err.println("Erro inesperado ao criar projeto: " + e.getMessage());
+            throw new RuntimeException("Erro ao criar projeto", e);
+        }
     }
 
-    @PostMapping
-    public Projeto criar(@RequestBody Projeto projeto) {
-        projeto.setId(contador++);
-        projetos.add(projeto);
-        return projeto;
+    // Getters e Setters com tratamento de exceções
+    public Long getId() {
+        return id;
     }
 
-    @GetMapping("/{id}")
-    public Projeto buscarPorId(@PathVariable Long id) {
-        return projetos.stream()
-                .filter(p -> p.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Projeto não encontrado"));
+    public void setId(Long id) {
+        try {
+            this.id = id;
+        } catch (Exception e) {
+            System.err.println("Erro ao definir ID: " + e.getMessage());
+        }
     }
 
-    @PutMapping("/{id}")
-    public Projeto atualizar(@PathVariable Long id, @RequestBody Projeto atualizado) {
-        Projeto projeto = buscarPorId(id);
-        projeto.setNome(atualizado.getNome());
-        projeto.setCargo(atualizado.getCargo());
-        projeto.setCpf(atualizado.getCpf());
-        projeto.setLogin(atualizado.getLogin());
-        projeto.setSenha(atualizado.getSenha());
-        return projeto;
+    public LocalDate getDataInicio() {
+        return dataInicio;
     }
 
-    @DeleteMapping("/{id}")
-    public void remover(@PathVariable Long id) {
-        projetos.removeIf(p -> p.getId().equals(id));
+    public void setDataInicio(LocalDate dataInicio) {
+        try {
+            if (dataInicio == null) {
+                throw new IllegalArgumentException("Data de início não pode ser nula");
+            }
+            if (dataFim != null && dataInicio.isAfter(dataFim)) {
+                throw new IllegalArgumentException("Data de início deve ser anterior à data de fim");
+            }
+            this.dataInicio = dataInicio;
+        } catch (IllegalArgumentException e) {
+            System.err.println("Erro de validação ao definir data de início: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            System.err.println("Erro inesperado ao definir data de início: " + e.getMessage());
+            throw new RuntimeException("Erro ao definir data de início", e);
+        }
+    }
+
+    public LocalDate getDataFim() {
+        return dataFim;
+    }
+
+    public void setDataFim(LocalDate dataFim) {
+        try {
+            if (dataFim == null) {
+                throw new IllegalArgumentException("Data de fim não pode ser nula");
+            }
+            if (dataInicio != null && dataFim.isBefore(dataInicio)) {
+                throw new IllegalArgumentException("Data de fim deve ser posterior à data de início");
+            }
+            this.dataFim = dataFim;
+        } catch (IllegalArgumentException e) {
+            System.err.println("Erro de validação ao definir data de fim: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            System.err.println("Erro inesperado ao definir data de fim: " + e.getMessage());
+            throw new RuntimeException("Erro ao definir data de fim", e);
+        }
+    }
+
+    public Usuario getResponsavel() {
+        return responsavel;
+    }
+
+    public void setResponsavel(Usuario responsavel) {
+        try {
+            if (responsavel == null) {
+                throw new IllegalArgumentException("Responsável não pode ser nulo");
+            }
+            this.responsavel = responsavel;
+        } catch (IllegalArgumentException e) {
+            System.err.println("Erro de validação ao definir responsável: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            System.err.println("Erro inesperado ao definir responsável: " + e.getMessage());
+            throw new RuntimeException("Erro ao definir responsável", e);
+        }
+    }
+
+    public StatusProjeto getStatus() {
+        return status;
+    }
+
+    public void alterarStatus(StatusProjeto novoStatus) {
+        try {
+            if (novoStatus == null) {
+                throw new IllegalArgumentException("Status não pode ser nulo");
+            }
+            this.status = novoStatus;
+        } catch (IllegalArgumentException e) {
+            System.err.println("Erro de validação ao alterar status: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            System.err.println("Erro inesperado ao alterar status: " + e.getMessage());
+            throw new RuntimeException("Erro ao alterar status", e);
+        }
+    }
+
+    public List<Equipe> getEquipes() {
+        try {
+            return equipes != null ? new ArrayList<>(equipes) : new ArrayList<>();
+        } catch (Exception e) {
+            System.err.println("Erro ao obter lista de equipes: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    public boolean adicionarEquipe(Equipe equipe) {
+        try {
+            if (equipe == null) {
+                throw new IllegalArgumentException("Equipe não pode ser nula");
+            }
+            if (equipes == null) {
+                equipes = new ArrayList<>();
+            }
+            if (equipes.contains(equipe)) {
+                return false; // Equipe já está no projeto
+            }
+            equipes.add(equipe);
+            return true;
+        } catch (IllegalArgumentException e) {
+            System.err.println("Erro de validação ao adicionar equipe: " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            System.err.println("Erro inesperado ao adicionar equipe: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean removerEquipe(Equipe equipe) {
+        try {
+            if (equipe == null) {
+                throw new IllegalArgumentException("Equipe não pode ser nula");
+            }
+            if (equipes == null) {
+                return false;
+            }
+            return equipes.remove(equipe);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Erro de validação ao remover equipe: " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            System.err.println("Erro inesperado ao remover equipe: " + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public String toString() {
+        try {
+            return String.format("Projeto{nome='%s', status='%s', responsavel='%s', dataInicio='%s', dataFim='%s'}",
+                    getNome() != null ? getNome() : "N/A",
+                    status != null ? status.toString() : "N/A",
+                    responsavel != null && responsavel.getNome() != null ? responsavel.getNome() : "N/A",
+                    dataInicio != null ? dataInicio.toString() : "N/A",
+                    dataFim != null ? dataFim.toString() : "N/A");
+        } catch (Exception e) {
+            return "Projeto{erro ao exibir dados: " + e.getMessage() + "}";
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        try {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+
+            Projeto projeto = (Projeto) obj;
+
+            if (id != null && projeto.id != null) {
+                return id.equals(projeto.id);
+            }
+
+            return getNome() != null && getNome().equals(projeto.getNome());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        try {
+            if (id != null) {
+                return id.hashCode();
+            }
+            return getNome() != null ? getNome().hashCode() : 0;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }

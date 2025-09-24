@@ -39,7 +39,7 @@ public class Main {
                                             try {
                                                 usuarioController.listarUsuarios();
                                             } catch (Exception e) {
-                                                System.out.println("Erro ao listar usuários: " + e.getMessage());
+                                                System.err.println("Erro ao listar usuários: " + e.getMessage());
                                             }
                                             break;
                                         case "2": //Cadastro de usuario
@@ -76,9 +76,9 @@ public class Main {
 
                                                 usuarioController.cadastrarUsuario(nome, cpf, cargo, login, senha);
                                             } catch (IllegalArgumentException e) {
-                                                System.out.println("Erro de validação: " + e.getMessage());
+                                                System.err.println("Erro de validação: " + e.getMessage());
                                             } catch (Exception e) {
-                                                System.out.println("Erro ao cadastrar usuário: " + e.getMessage());
+                                                System.err.println("Erro ao cadastrar usuário: " + e.getMessage());
                                             }
                                             break;
                                         case "3": //Exclusão de Usuario
@@ -90,9 +90,9 @@ public class Main {
                                                 }
                                                 usuarioController.excluirUsuario(deleteCpf);
                                             } catch (IllegalArgumentException e) {
-                                                System.out.println("Erro de validação: " + e.getMessage());
+                                                System.err.println("Erro de validação: " + e.getMessage());
                                             } catch (Exception e) {
-                                                System.out.println("Erro ao excluir usuário: " + e.getMessage());
+                                                System.err.println("Erro ao excluir usuário: " + e.getMessage());
                                             }
                                             break;
                                         case "4":
@@ -102,10 +102,10 @@ public class Main {
                                             break;
                                     }
                                 } catch (InputMismatchException e) {
-                                    System.out.println("Entrada inválida. Por favor, digite uma opção válida.");
+                                    System.err.println("Entrada inválida. Por favor, digite uma opção válida.");
                                     scanner.nextLine(); // Limpa o buffer
                                 } catch (Exception e) {
-                                    System.out.println("Erro inesperado no menu de usuários: " + e.getMessage());
+                                    System.err.println("Erro inesperado no menu de usuários: " + e.getMessage());
                                 }
                             }
                             break;
@@ -119,27 +119,27 @@ public class Main {
                             System.out.println("Saindo do sistema");
                             break;
                         default:
-                            System.out.println("Opção invalida. Tente novamente");
+                            System.out.println("Opção inválida. Tente novamente");
                             break;
                     }
                     if(opcaoMenu.equals("4")){
                         break;
                     }
                 } catch (InputMismatchException e) {
-                    System.out.println("Entrada inválida. Por favor, digite uma opção válida.");
+                    System.err.println("Entrada inválida. Por favor, digite uma opção válida.");
                     scanner.nextLine(); // Limpa o buffer
                 } catch (Exception e) {
-                    System.out.println("Erro inesperado no menu principal: " + e.getMessage());
+                    System.err.println("Erro inesperado no menu principal: " + e.getMessage());
                 }
             }
         } catch (Exception e) {
-            System.out.println("Erro crítico na aplicação: " + e.getMessage());
+            System.err.println("Erro crítico na aplicação: " + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
                 scanner.close();
             } catch (Exception e) {
-                System.out.println("Erro ao fechar o scanner: " + e.getMessage());
+                System.err.println("Erro ao fechar o scanner: " + e.getMessage());
             }
             System.out.println("Programa Finalizado");
         }
